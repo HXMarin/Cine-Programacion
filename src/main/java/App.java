@@ -12,16 +12,6 @@ public class App {
 
     }
 
-    private static int getNumSala(Sala[]sala, Scanner sc) {
-        System.out.println("Salas que están disponibles: ");
-        for (int i = 0; i < sala.length; i++) {
-            System.out.println("Sala"+(i+1));
-        }
-        System.out.println("Seleccione un Número de Sala");
-        int numSala = sc.nextInt();
-        return numSala -1;
-    }
-
     private static int menu() {
         int caso = -1;
         Scanner sc = new Scanner(System.in);
