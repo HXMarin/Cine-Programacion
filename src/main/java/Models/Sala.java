@@ -9,26 +9,36 @@ public class Sala {
     private int columnasLength;
     private final int MAX_COLUMNA = 9;
     private final int MAX_FILA = 5;
+    private final String LETRAS = "ABCDE";
+
     private Butaca[][] matrizButaca;
+    private Butaca[][] sitios;
     private int recaudacion;
-    private final String filas = "ABCDE";
+    private int butacasLibres;
+    private int butacasReservadas;
+    private int butacasOcupadas;
+
+
 
     public Sala(int filas, int columnas) {
-        setFilas(filas);
+        setLetras(filas);
         setColumnas(columnas);
-        matrizButaca = new Butaca[filas][columnas];
+        setMatrizButaca(matrizButaca);
+        butacasLibres = MAX_FILA * MAX_COLUMNA;
+        butacasReservadas = 0;
+        butacasOcupadas = 0;
         recaudacion = 0;
     }
 
-    public int getFilas() {
+    public int getLetras() {
         return filasLength;
     }
 
-    public void setFilas(int filas) {
-        if (filas < 1 || filas > MAX_FILA){
+    public void setLetras(int letras) {
+        if (letras < 1 || letras > MAX_FILA){
             throw new InvalidRequestStateException("La fila debe estar entre 1 y 5.");
         }else{
-            this.filasLength = filas;
+            this.filasLength = letras;
         }
     }
 
@@ -69,14 +79,42 @@ public class Sala {
             return getRecaudacion();
         }else return -1;
     }
+
+    public int getButacasLibres() {
+        return butacasLibres;
+    }
+
+    public void setButacasLibres(int butacasLibres) {
+        this.butacasLibres = butacasLibres;
+    }
+
+    public int getButacasReservadas() {
+        return butacasReservadas;
+    }
+
+    public void setButacasReservadas(int butacasReservadas) {
+        this.butacasReservadas = butacasReservadas;
+    }
+
+    public int getButacasOcupadas() {
+        return butacasOcupadas;
+    }
+
+    public void setButacasOcupadas(int butacasOcupadas) {
+        this.butacasOcupadas = butacasOcupadas;
+    }
+
     public boolean itsFree(char fila, int columna){
-        return (matrizButaca[filas.indexOf(fila)][columna - 1].getEstado() == EstadoButacas.LIBRE);
+        return (matrizButaca[LETRAS.indexOf(fila)][columna - 1].getEstado() == EstadoButacas.LIBRE);
+    }
+    public boolean itsReserved(char fila, int columna){
+        return (matrizButaca[LETRAS.indexOf(fila)][columna - 1].getEstado() == EstadoButacas.RESERVADA);
     }
     public Sala reservaButacas(char fila,int columna){
         if (itsFree(fila,columna)){
-            matrizButaca[filas.indexOf(fila)][columna - 1].setEstado(EstadoButacas.RESERVADA);
+            matrizButaca[LETRAS.indexOf(fila)][columna - 1].setEstado(EstadoButacas.OCUPADA);
         }else{
-            System.out.println("La butaca está ocupada, elija otra.");
+            System.out.println("La butaca está Reservada, elija otra.");
         }
         return null;
     }
@@ -94,12 +132,12 @@ public class Sala {
     }
 
     public void printSala(){
-        com.diogonunes.jcolor.Attribute gb = Attribute.GREEN_BACK();
-        com.diogonunes.jcolor.Attribute rb = Attribute.RED_BACK();
-        com.diogonunes.jcolor.Attribute bb = Attribute.BLUE_BACK();
-        for (int i = 0; i < MAX_FILA; i++) {
-            System.out.print(filas.charAt(i));
-            for (int j = 0; j < MAX_COLUMNA; j++) {
+        Attribute gb = Attribute.GREEN_BACK();
+        Attribute rb = Attribute.RED_BACK();
+        Attribute bb = Attribute.BLUE_BACK();
+        for (int i = 0; i < filasLength; i++) {
+            System.out.print(LETRAS.charAt(i));
+            for (int j = 0; j < columnasLength; j++) {
                 if (matrizButaca[i][j].getEstado() == EstadoButacas.LIBRE){
                     System.out.print(Ansi.colorize("["+j+"]",gb));
                 }else if (matrizButaca[i][j].getEstado()==EstadoButacas.RESERVADA){
@@ -109,6 +147,7 @@ public class Sala {
             }
             System.out.println("");
         }
+        System.out.println(" 1 2 3 4 5 6 7 8 9 ");
     }
 }
 
