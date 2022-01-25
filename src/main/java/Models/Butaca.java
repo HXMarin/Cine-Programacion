@@ -3,12 +3,8 @@ package Models;
 public class Butaca {
 private EstadoButacas estado = EstadoButacas.LIBRE;
 
-    public Butaca(EstadoButacas estado) {
-        getEstado();
-        setEstado(estado);
-    }
-
     public Butaca() {
+        setEstado(EstadoButacas.LIBRE);
     }
 
     public EstadoButacas getEstado() {

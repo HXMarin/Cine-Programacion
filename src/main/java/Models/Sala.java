@@ -12,7 +12,6 @@ public class Sala {
     private final String LETRAS = "ABCDE";
 
     private Butaca[][] matrizButaca;
-    private Butaca[][] sitios;
     private int recaudacion;
     private int butacasLibres;
     private int butacasReservadas;
@@ -23,11 +22,17 @@ public class Sala {
     public Sala(int filas, int columnas) {
         setLetras(filas);
         setColumnas(columnas);
-        setMatrizButaca(matrizButaca);
         butacasLibres = MAX_FILA * MAX_COLUMNA;
         butacasReservadas = 0;
         butacasOcupadas = 0;
         recaudacion = 0;
+
+        matrizButaca = new Butaca[filas][columnas];
+        for (int i = 0; i < filas; i++) {
+            for (int j = 0; j < columnas; j++) {
+            matrizButaca[i][j] = new Butaca();
+            }
+        }
     }
 
     public int getLetras() {
@@ -69,6 +74,7 @@ public class Sala {
     public void setRecaudacion(int recaudacion) {
         this.recaudacion = recaudacion;
     }
+
     public int increaseRecaudacion(){
         setRecaudacion(getRecaudacion() + 6);
         return getRecaudacion();
@@ -105,18 +111,72 @@ public class Sala {
     }
 
     public boolean itsFree(char fila, int columna){
-        return (matrizButaca[LETRAS.indexOf(fila)][columna - 1].getEstado() == EstadoButacas.LIBRE);
+        return (matrizButaca[LETRAS.indexOf(fila)][columna].getEstado() == EstadoButacas.LIBRE);
     }
     public boolean itsReserved(char fila, int columna){
-        return (matrizButaca[LETRAS.indexOf(fila)][columna - 1].getEstado() == EstadoButacas.RESERVADA);
+        return (matrizButaca[LETRAS.indexOf(fila)][columna].getEstado() == EstadoButacas.RESERVADA);
     }
+    /**
+     * Método de compra de una butaca
+     * @param fila
+     * @param columna
+     * @return
+     */
+    public boolean buyButaca(char fila,int columna){
+        if(itsFree(fila,columna)){
+            matrizButaca[LETRAS.indexOf(fila)][columna].setEstado(EstadoButacas.OCUPADA);
+            increaseRecaudacion();
+            setButacasOcupadas(butacasOcupadas + 1);
+            setButacasLibres(butacasLibres - 1);
+            return true;
+        }else{
+            return false;
+        }
+    }
+    /**
+     * Método con el que se reservan las butacas.
+     * @param fila
+     * @param columna
+     * @return
+     */
     public Sala reservaButacas(char fila,int columna){
         if (itsFree(fila,columna)){
-            matrizButaca[LETRAS.indexOf(fila)][columna - 1].setEstado(EstadoButacas.OCUPADA);
+            matrizButaca[LETRAS.indexOf(fila)][columna].setEstado(EstadoButacas.OCUPADA);
         }else{
             System.out.println("La butaca está Reservada, elija otra.");
         }
         return null;
+    }
+
+    /**
+     * Método que nos imprime la sala
+     */
+    public void ImprimirSala(){
+        Attribute gb = Attribute.GREEN_BACK();
+        Attribute rb = Attribute.RED_BACK();
+        Attribute bb = Attribute.BLUE_BACK();
+        for (int i = 0; i < filasLength; i++) {
+            System.out.print(LETRAS.charAt(i));
+            for (int j = 0; j < columnasLength; j++) {
+                if (matrizButaca != null && matrizButaca[i][j].getEstado() == EstadoButacas.LIBRE){
+                    System.out.print(Ansi.colorize("["+j+"]",gb));
+                }else if (matrizButaca != null && matrizButaca[i][j].getEstado()==EstadoButacas.RESERVADA){
+                    System.out.print(Ansi.colorize("["+j+"]",bb));
+                }else
+                    System.out.print(Ansi.colorize("["+j+"]",rb));
+            }
+            System.out.println(" ");
+        }
+    }
+
+    /**
+     * Método que nos muestra el estado de la sala.
+     */
+    public void salaEstado(){
+        ImprimirSala();
+        System.out.println("Butacas que quedan Libre:" + getButacasLibres());
+        System.out.println("Butacas que están reservadas: " + getButacasReservadas());
+        System.out.println("Butacas Ocupadas: " + getButacasOcupadas());
     }
 
     @Override
@@ -124,30 +184,11 @@ public class Sala {
         String result = "";
         for (int i = 0; i < matrizButaca.length; i++) {
             for (int j = 0; j < matrizButaca[i].length; j++) {
-             result += matrizButaca[i][j];
+                result += matrizButaca[i][j];
             }
             result+= "\n";
         }
         return result;
-    }
-
-    public void printSala(){
-        Attribute gb = Attribute.GREEN_BACK();
-        Attribute rb = Attribute.RED_BACK();
-        Attribute bb = Attribute.BLUE_BACK();
-        for (int i = 0; i < filasLength; i++) {
-            System.out.print(LETRAS.charAt(i));
-            for (int j = 0; j < columnasLength; j++) {
-                if (matrizButaca[i][j].getEstado() == EstadoButacas.LIBRE){
-                    System.out.print(Ansi.colorize("["+j+"]",gb));
-                }else if (matrizButaca[i][j].getEstado()==EstadoButacas.RESERVADA){
-                    System.out.print(Ansi.colorize("["+j+"]",bb));
-                }else
-                    System.out.print(Ansi.colorize("["+j+"]",rb));
-            }
-            System.out.println("");
-        }
-        System.out.println(" 1 2 3 4 5 6 7 8 9 ");
     }
 }
 
